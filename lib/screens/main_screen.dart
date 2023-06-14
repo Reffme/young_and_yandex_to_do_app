@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:young_and_yandex_to_do_app/blocs/fliter_cubit/todo_cubit.dart';
+import 'package:young_and_yandex_to_do_app/blocs/task_cubit/task_cubit.dart';
+import 'package:young_and_yandex_to_do_app/blocs/todo_cubit/todo_cubit.dart';
+import 'package:young_and_yandex_to_do_app/models/TaskModel.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,20 +20,17 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          context.read<TaskCubit>().clearTask();
           Navigator.of(context).pushNamed('/task');
         },
+        elevation: 20,
         child: const Icon(
           CupertinoIcons.plus,
           color: Colors.white,
         ),
-        elevation: 20,
       ),
       body: CustomScrollView(
         slivers: <Widget>[
-          // SliverAppBar.medium(
-          // title: Text('fhdfhfdh'),
-          // ),
-          //
           SliverAppBar(
             pinned: true,
             expandedHeight: 160,
@@ -42,62 +41,65 @@ class _MainScreenState extends State<MainScreen> {
                 left: mediaQWidh / 5,
                 right: 15,
               ),
-              title: SizedBox(
-                child: Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      RichText(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  BlocBuilder<TodoCubit, TodoState>(
+                    builder: (context, state) {
+                      return RichText(
                         text: TextSpan(
-                            text: "Мои дела",
-                            style: Theme.of(context).textTheme.headlineSmall,
-                            children: [
-                              TextSpan(
-                                  text: "\nВыполнено - 5",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(color: Colors.grey))
-                            ]),
-                      ),
-                      BlocBuilder<TodoCubit, TodoState>(
-                        builder: (context, state) {
-                          if (state is TodoInitial) {
-                            return IconButton(
-                              onPressed: () {
-                                context.read<TodoCubit>().switchStatus();
-                              },
-                              icon: Icon(
-                                state.status
-                                    ? CupertinoIcons.eye_solid
-                                    : CupertinoIcons.eye_slash,
-                                color: Colors.blue,
-                                size: 20,
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                    ],
+                          text: "Мои дела",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          children: [
+                            TextSpan(
+                              text:
+                              "\nВыполнено - ${context.read<TodoCubit>().countTasksWithStatusTrue()}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                ),
+                  BlocBuilder<TodoCubit, TodoState>(
+                    builder: (context, state) {
+                      if (state is TodoInitial) {
+                        return IconButton(
+                          onPressed: () {
+                            context.read<TodoCubit>().switchStatus();
+                          },
+                          icon: Icon(
+                            state.status
+                                ? CupertinoIcons.eye_solid
+                                : CupertinoIcons.eye_slash,
+                            color: Colors.blue,
+                            size: 20,
+                          ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverToBoxAdapter(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.white, // Белый фон
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2), // Цвет тени
-                      blurRadius: 4, // Радиус размытия
-                      offset: Offset(0, 2), // Смещение тени
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -106,16 +108,14 @@ class _MainScreenState extends State<MainScreen> {
                     if (state is TodoInitial) {
                       return ListView.builder(
                         itemCount: state.allTasks.length,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           if (state.status == false) {
                             if (state.allTasks[index].status == false) {
                               return TaskTileWidget(
-                                text: state.allTasks[index].text,
-                                date: state.allTasks[index].date,
                                 index: index,
-                                status: state.allTasks[index].status,
+                                task: state.allTasks[index],
                               );
                             } else {
                               return Container();
@@ -123,11 +123,9 @@ class _MainScreenState extends State<MainScreen> {
                           }
                           if (state.status == true) {
                             return TaskTileWidget(
-                                text: state.allTasks[index].text,
-                                date: state.allTasks[index].date,
-                                index: index,
-                                status: state.allTasks[index].status);
+                                index: index, task: state.allTasks[index]);
                           }
+                          return Container();
                         },
                       );
                     } else {
@@ -144,28 +142,34 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class TaskTileWidget extends StatelessWidget {
-  const TaskTileWidget({
-    super.key,
-    required this.text,
-    this.date,
-    required this.index,
-    required this.status,
-  });
 
-  final String text;
+class TaskTileWidget extends StatelessWidget {
+  TaskTileWidget({
+    Key? key,
+    required this.index,
+    required this.task,
+  }) : super(key: key);
+
+  final TaskModel task;
   final int index;
-  final DateTime? date;
-  final bool status;
+  String _titleText = '';
 
   @override
   Widget build(BuildContext context) {
+    if (task.importance.contains('Высокий')) {
+      _titleText += '!! ${task.text}';
+    } else if (task.importance.contains('Низкий')) {
+      _titleText += '↓ ${task.text}';
+    } else {
+      _titleText += task.text;
+    }
+
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.horizontal,
       background: Container(
         color: Colors.green,
-        child: Align(
+        child: const Align(
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: EdgeInsets.only(left: 20.0),
@@ -179,7 +183,7 @@ class TaskTileWidget extends StatelessWidget {
       secondaryBackground: Container(
         height: 100,
         color: Colors.red,
-        child: Align(
+        child: const Align(
           alignment: Alignment.centerRight,
           child: Padding(
             padding: EdgeInsets.only(right: 20.0),
@@ -199,20 +203,29 @@ class TaskTileWidget extends StatelessWidget {
       },
       child: ListTile(
         onTap: () {
-          Navigator.of(context).pushNamed('/task',arguments: {'isEditing' : true});
+          Navigator.of(context).pushNamed('/task');
         },
         leading: Checkbox(
           activeColor: Colors.green,
-          value: status ? true : false,
+          value: task.status,
           onChanged: (value) {},
         ),
-        title: Text(
-          text,
-          style: Theme.of(context).textTheme.titleMedium,
+        title: RichText(
+          text: TextSpan(
+            text: _titleText,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                decoration: task.status == true
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                color:
+                    task.status == false && task.importance.contains('Высокий')
+                        ? Colors.red
+                        : Colors.black),
+          ),
         ),
-        subtitle: date == null
-            ? Container()
-            : Text(DateFormat('dd MMM yyyy').format(date!)),
+        subtitle: task.date != null
+            ? Text(DateFormat('dd MM yyyy').format(task.date!))
+            : Container(),
         trailing: IconButton(
           onPressed: () {},
           icon: const Icon(

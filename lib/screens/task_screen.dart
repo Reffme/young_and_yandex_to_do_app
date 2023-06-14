@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:young_and_yandex_to_do_app/blocs/task_cubit/task_cubit.dart';
+import 'package:young_and_yandex_to_do_app/blocs/todo_cubit/todo_cubit.dart';
+import 'package:young_and_yandex_to_do_app/models/TaskModel.dart';
 
 class TaskScreen extends StatelessWidget {
-  const TaskScreen({super.key});
+  TaskScreen({Key? key}) : super(key: key);
+
+  final TextEditingController _todoTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, bool>?;
-    final arg1 = arguments?['isEditing'];
-    return const Scaffold(
+    return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
@@ -18,24 +21,26 @@ class TaskScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
-                  PopAndSaveRowWidget(),
-                  ToDoTextWidget(),
-                  SizedBox(
-                    height: 28,
+                  PopAndSaveRowWidget(
+                    todoTextController: _todoTextController,
                   ),
-                  ImportantButtonWidget(),
-                  SizedBox(height: 5),
-                  Divider(thickness: 1),
-                  TodoCalendarWidget(),
+                  ToDoTextWidget(controller: _todoTextController),
+                  const SizedBox(height: 28),
+                  const ImportantButtonWidget(),
+                  const SizedBox(height: 5),
+                  const Divider(thickness: 1),
+                  const TodoCalendarWidget(),
                 ],
               ),
             ),
-            SizedBox(height: 12),
-            Divider(thickness: 1),
-            DeleteButtonWidget(),
+            const SizedBox(height: 12),
+            const Divider(thickness: 1),
+            const DeleteButtonWidget(
+              index: -1,
+            ),
           ],
         ),
       ),
@@ -45,59 +50,120 @@ class TaskScreen extends StatelessWidget {
 
 class DeleteButtonWidget extends StatelessWidget {
   const DeleteButtonWidget({
-    super.key,
-  });
+    Key? key,
+    this.index = -1,
+  }) : super(key: key);
+
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-        onPressed: () {},
-        child: Row(
-          children: [
-            Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-            Text(
-              'Удалить',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(color: Colors.red),
-            )
-          ],
-        ));
+      onPressed: () {
+        if (index == -1) {
+          Navigator.of(context).pop();
+        } else {
+          context.read<TodoCubit>().delete(index);
+          Navigator.of(context).pop();
+        }
+      },
+      child: Row(
+        children: [
+          const Icon(
+            Icons.delete,
+            color: Colors.red,
+          ),
+          Text(
+            'Удалить',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: Colors.red),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class TodoCalendarWidget extends StatelessWidget {
-  const TodoCalendarWidget({
-    super.key,
-  });
+class TodoCalendarWidget extends StatefulWidget {
+  const TodoCalendarWidget({Key? key}) : super(key: key);
+
+  @override
+  State<TodoCalendarWidget> createState() => _TodoCalendarWidgetState();
+}
+
+class _TodoCalendarWidgetState extends State<TodoCalendarWidget> {
+  bool _openDatePicker = false;
+  DateTime? _selectedDate;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BoldTextWidget(text: 'Сделать до'),
-            Text(
-              textAlign: TextAlign.left,
-              'data',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.blue),
-            ),
-          ],
+        GestureDetector(
+          onTap: () {
+            showDatePicker(
+              context: context,
+              initialEntryMode: DatePickerEntryMode.calendarOnly,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2023),
+              lastDate: DateTime(2024),
+              builder: (BuildContext context, Widget? child) {
+                return Theme(
+                  data: ThemeData.light().copyWith(
+                    primaryColor: Colors.blue, // Цвет выбора даты
+                    hintColor: Colors.blue, // Цвет кнопки "Выбрать"
+                  ),
+                  child: child!,
+                );
+              },
+            ).then((selectedDate) {
+              if (selectedDate != null) {
+                setState(() {
+                  context.read<TaskCubit>().editTask(date: selectedDate);
+                  _selectedDate = selectedDate;
+                  _openDatePicker = true;
+                });
+              } else {
+                setState(() {
+                  context.read<TaskCubit>().editTask(date: null);
+                  _selectedDate = null;
+                  _openDatePicker = false;
+                });
+              }
+            });
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const BoldTextWidget(text: 'Сделать до'),
+              Text(
+                _selectedDate != null
+                    ? DateFormat('dd.MM.yyyy').format(_selectedDate!)
+                    : 'Не выбрано',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(color: Colors.blue),
+              ),
+            ],
+          ),
         ),
         Expanded(
           child: SwitchListTile(
             dense: true,
-            value: false,
-            onChanged: (value) {},
+            value: _openDatePicker,
+            onChanged: (value) {
+              setState(() {
+                _openDatePicker = value;
+                if (!value) {
+                  _selectedDate = null;
+                }
+              });
+            },
+            activeColor: Colors.blue, // Цвет активного состояния
+            activeTrackColor: Colors.lightBlue, // Цвет активного трека
           ),
         ),
       ],
@@ -107,18 +173,23 @@ class TodoCalendarWidget extends StatelessWidget {
 
 class ToDoTextWidget extends StatelessWidget {
   const ToDoTextWidget({
-    super.key,
-  });
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Container(
         padding: const EdgeInsets.all(8),
-        child: const TextField(
-          minLines: 4,
-          maxLines: null,
-          decoration: InputDecoration(
+        child: TextField(
+          minLines: 1,
+          maxLines: 10,
+          controller: controller,
+          onSubmitted: (value) {},
+          decoration: const InputDecoration(
             labelText: 'Что надо сделать?',
             border: InputBorder.none,
           ),
@@ -130,11 +201,18 @@ class ToDoTextWidget extends StatelessWidget {
 
 class PopAndSaveRowWidget extends StatelessWidget {
   const PopAndSaveRowWidget({
-    super.key,
-  });
+    Key? key,
+    required this.todoTextController,
+  }) : super(key: key);
+
+  final TextEditingController todoTextController;
 
   @override
   Widget build(BuildContext context) {
+    final taskCubit = context.read<TaskCubit>();
+    final initialState = taskCubit.state as TaskInitial;
+    final task = initialState.task;
+    final index = initialState.index;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -142,10 +220,18 @@ class PopAndSaveRowWidget extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: Icon(Icons.close_outlined, color: Colors.black),
+          icon: const Icon(Icons.close_outlined, color: Colors.black),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            if (index == -1) {
+              context.read<TaskCubit>().editTask(text: todoTextController.text);
+              context.read<TodoCubit>().add(task);
+              Navigator.of(context).pop();
+            } else {
+              context.read<TodoCubit>().editing(index, task);
+            }
+          },
           child: const Text(
             'СОХРАНИТЬ',
             style: TextStyle(color: Colors.blue, fontSize: 16),
@@ -156,56 +242,70 @@ class PopAndSaveRowWidget extends StatelessWidget {
   }
 }
 
-class ImportantButtonWidget extends StatelessWidget {
-  const ImportantButtonWidget({
-    super.key,
-  });
+class ImportantButtonWidget extends StatefulWidget {
+  const ImportantButtonWidget({Key? key}) : super(key: key);
+
+  @override
+  _ImportantButtonWidgetState createState() => _ImportantButtonWidgetState();
+}
+
+class _ImportantButtonWidgetState extends State<ImportantButtonWidget> {
+  String selectedImportance = 'Нет';
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Row(
-        children: [
-          const BoldTextWidget(text: 'Важность'),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          PopupMenuButton(
-            child: Text(
-              'Нет',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(color: Colors.grey),
+    return Column(
+      children: [
+        Row(
+          children: [
+            const BoldTextWidget(text: 'Важность'),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            PopupMenuButton<String>(
+              child: Text(
+                selectedImportance,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(color: Colors.grey),
+              ),
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'Нет',
+                  child: Text('Нет'),
+                ),
+                const PopupMenuItem(
+                  value: 'Низкий',
+                  child: Text('Низкий'),
+                ),
+                const PopupMenuItem(
+                  value: 'Высокий',
+                  child: Text('Высокий'),
+                ),
+              ],
+              onSelected: (value) {
+                setState(() {
+                  context.read<TaskCubit>().editTask(importance: value);
+                  selectedImportance = value;
+                });
+              },
+              color: Colors.white, // Цвет фона меню
             ),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 1,
-                child: Text('Нет'),
-              ),
-              const PopupMenuItem(
-                value: 1,
-                child: Text('Низкий'),
-              ),
-              const PopupMenuItem(
-                value: 1,
-                child: Text('Высокий'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ]);
+          ],
+        ),
+      ],
+    );
   }
 }
 
 class BoldTextWidget extends StatelessWidget {
   const BoldTextWidget({
-    super.key,
+    Key? key,
     required this.text,
-  });
+  }) : super(key: key);
 
   final String text;
 
@@ -215,7 +315,7 @@ class BoldTextWidget extends StatelessWidget {
       text,
       style: Theme.of(context)
           .textTheme
-          .titleMedium
+          .headline6
           ?.copyWith(fontWeight: FontWeight.bold),
     );
   }

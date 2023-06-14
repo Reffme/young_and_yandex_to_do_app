@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:young_and_yandex_to_do_app/models/TaskModel.dart';
-import 'package:young_and_yandex_to_do_app/repositories/TaskRepository.dart';
 
 part 'todo_state.dart';
 
@@ -15,32 +14,35 @@ class TodoCubit extends Cubit<TodoState> {
         );
 
   void switchStatus() {
+    debugPrint('switchStatus() called');
+
     final currentState = state as TodoInitial;
     final newStatus = !currentState.status;
     emit(currentState.copyWith(status: newStatus));
   }
 
   void delete(int index) {
+    debugPrint('delete() called with index: $index');
+
     final currentState = state as TodoInitial;
     final List<TaskModel> updatedTasks =
-        List<TaskModel>.from(currentState.allTasks); // Копирование списка
-    updatedTasks.removeAt(index); // Удаление элемента по индексу
+        List<TaskModel>.from(currentState.allTasks);
+    updatedTasks.removeAt(index);
     emit(
       currentState.copyWith(allTasks: updatedTasks),
     );
   }
 
   void switchTaskStatus(int index) {
-    final currentState = state as TodoInitial;
-    final updatedTasks =
-        List<TaskModel>.from(currentState.allTasks); // Копирование списка
-    final task = updatedTasks[index]; // Получение задачи по индексу
+    debugPrint('switchTaskStatus() called with index: $index');
 
-    // Изменение статуса задачи
+    final currentState = state as TodoInitial;
+    final updatedTasks = List<TaskModel>.from(currentState.allTasks);
+    final task = updatedTasks[index];
+
     final newStatus = !task.status;
     final updatedTask = task.copyWith(status: newStatus);
 
-    // Обновление списка задач
     updatedTasks[index] = updatedTask;
 
     emit(
@@ -51,10 +53,11 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void add(TaskModel task) {
+    debugPrint('add() called with task: $task');
+
     final currentState = state as TodoInitial;
-    final updatedTasks =
-        List<TaskModel>.from(currentState.allTasks); // Копирование списка
-    updatedTasks.add(task); // Добавление новой задачи
+    final updatedTasks = List<TaskModel>.from(currentState.allTasks);
+    updatedTasks.add(task);
 
     emit(
       currentState.copyWith(
@@ -64,15 +67,21 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void editing(int index, TaskModel task) {
+    debugPrint('editing() called with index: $index, task: $task');
+
     final currentState = state as TodoInitial;
-    final updatedTasks =
-        List<TaskModel>.from(currentState.allTasks); // Копирование списка
-    updatedTasks[index] = task; // Замена задачи в скопированном списке
+    final updatedTasks = List<TaskModel>.from(currentState.allTasks);
+    updatedTasks[index] = task;
 
     emit(
       currentState.copyWith(
         allTasks: updatedTasks,
       ),
     );
+  }
+
+  int countTasksWithStatusTrue() {
+    final currentState = state as TodoInitial;
+    return currentState.allTasks.where((task) => task.status).length;
   }
 }

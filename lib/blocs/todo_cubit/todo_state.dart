@@ -8,6 +8,7 @@ class TodoInitial extends TodoState {
   final List<TaskModel> allTasks;
   final bool status;
 
+
   TodoInitial({required this.allTasks, required this.status});
 
   @override
