@@ -24,5 +24,5 @@
 
 ## Скриншоты
 
-![Скриншот 1](ссылка_на_скриншот_1)
+![Скриншот 1](https://sun9-79.userapi.com/impg/KvYxMOjEKLJr-WglvHiqzW6PjCOBEEOLGBD7oQ/rtTJL5WKst8.jpg?size=972x2160&quality=96&sign=fc20df83588095929e96876ee65a12b6&type=album)
 ![Скриншот 2](ссылка_на_скриншот_2)
