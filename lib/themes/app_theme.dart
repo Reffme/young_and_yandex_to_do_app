@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:young_and_yandex_to_do_app/themes/color_theme.dart';
+import 'color_theme.dart';
 
 import 'text_theme.dart';
 
@@ -12,16 +12,18 @@ abstract interface class AppTheme {
 }
 
 abstract base class BaseAppTheme implements AppTheme {
-  final ColorTheme color;
-  final StyleTextTheme text;
+  const BaseAppTheme({required this.color, required this.text});
 
- const BaseAppTheme({required this.color, required this.text});
+  @override
+  final ColorTheme color;
+  @override
+  final StyleTextTheme text;
 }
-final class AppThemeRealese extends BaseAppTheme{
+
+final class AppThemeRealese extends BaseAppTheme {
   AppThemeRealese({required super.color, required super.text});
 
   @override
   // TODO: implement material
   ThemeData get material => throw UnimplementedError();
-
 }

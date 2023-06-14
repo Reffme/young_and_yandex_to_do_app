@@ -15,12 +15,10 @@ class TodoInitial extends TodoState {
   List<Object> get props => [allTasks, status];
 
   TodoInitial copyWith({
-    List<TaskModel>? allTasks,
-    bool? status,
-  }) {
-    return TodoInitial(
+    final List<TaskModel>? allTasks,
+    final bool? status,
+  }) => TodoInitial(
       allTasks: allTasks ?? this.allTasks,
       status: status ?? this.status,
     );
-  }
 }

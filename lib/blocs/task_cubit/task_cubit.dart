@@ -1,18 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:young_and_yandex_to_do_app/models/TaskModel.dart';
+import '../../models/TaskModel.dart';
 
 part 'task_state.dart';
 
 class TaskCubit extends Cubit<TaskState> {
-  TaskCubit(TaskModel initialTask) : super(TaskInitial(task: initialTask,));
+  TaskCubit(final TaskModel initialTask) : super(TaskInitial(task: initialTask,));
 
   void editTask({
-    String? text,
-    DateTime? date,
-    bool? status,
-    String? importance,
-    int? index,
+    final String? text,
+    final DateTime? date,
+    final bool? status,
+    final String? importance,
+    final int? index,
   }) {
     final currentState = state;
     if (currentState is TaskInitial) {

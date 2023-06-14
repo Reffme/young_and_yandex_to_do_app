@@ -1,17 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:young_and_yandex_to_do_app/models/TaskModel.dart';
+import '../../models/TaskModel.dart';
 
 part 'todo_state.dart';
 
 class TodoCubit extends Cubit<TodoState> {
-  final List<TaskModel> allTasks;
-
   TodoCubit(this.allTasks)
       : super(
           TodoInitial(status: true, allTasks: allTasks),
         );
+  final List<TaskModel> allTasks;
 
   void switchStatus() {
     debugPrint('switchStatus() called');
@@ -21,7 +20,7 @@ class TodoCubit extends Cubit<TodoState> {
     emit(currentState.copyWith(status: newStatus));
   }
 
-  void delete(int index) {
+  void delete(final int index) {
     debugPrint('delete() called with index: $index');
 
     final currentState = state as TodoInitial;
@@ -33,7 +32,7 @@ class TodoCubit extends Cubit<TodoState> {
     );
   }
 
-  void switchTaskStatus(int index) {
+  void switchTaskStatus(final int index) {
     debugPrint('switchTaskStatus() called with index: $index');
 
     final currentState = state as TodoInitial;
@@ -52,7 +51,7 @@ class TodoCubit extends Cubit<TodoState> {
     );
   }
 
-  void add(TaskModel task) {
+  void add(final TaskModel task) {
     debugPrint('add() called with task: $task');
 
     final currentState = state as TodoInitial;
@@ -66,7 +65,7 @@ class TodoCubit extends Cubit<TodoState> {
     );
   }
 
-  void editing(int index, TaskModel task) {
+  void editing(final int index, final TaskModel task) {
     debugPrint('editing() called with index: $index, task: $task');
 
     final currentState = state as TodoInitial;
@@ -82,6 +81,6 @@ class TodoCubit extends Cubit<TodoState> {
 
   int countTasksWithStatusTrue() {
     final currentState = state as TodoInitial;
-    return currentState.allTasks.where((task) => task.status).length;
+    return currentState.allTasks.where((final task) => task.status).length;
   }
 }

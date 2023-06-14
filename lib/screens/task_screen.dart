@@ -253,25 +253,17 @@ class _ImportantButtonWidgetState extends State<ImportantButtonWidget> {
   String selectedImportance = 'Нет';
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(final BuildContext context) => Column(
       children: [
-        Row(
+        const Row(
           children: [
-            const BoldTextWidget(text: 'Важность'),
+            BoldTextWidget(text: 'Важность'),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             PopupMenuButton<String>(
-              child: Text(
-                selectedImportance,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(color: Colors.grey),
-              ),
               itemBuilder: (context) => [
                 const PopupMenuItem(
                   value: 'Нет',
@@ -292,13 +284,19 @@ class _ImportantButtonWidgetState extends State<ImportantButtonWidget> {
                   selectedImportance = value;
                 });
               },
-              color: Colors.white, // Цвет фона меню
+              color: Colors.white,
+              child: Text(
+                selectedImportance,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(color: Colors.grey),
+              ), // Цвет фона меню
             ),
           ],
         ),
       ],
     );
-  }
 }
 
 class BoldTextWidget extends StatelessWidget {
@@ -310,13 +308,11 @@ class BoldTextWidget extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) {
-    return Text(
+  Widget build(final BuildContext context) => Text(
       text,
       style: Theme.of(context)
           .textTheme
           .headline6
           ?.copyWith(fontWeight: FontWeight.bold),
     );
-  }
 }
