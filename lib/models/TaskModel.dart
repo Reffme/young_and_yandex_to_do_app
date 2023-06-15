@@ -21,12 +21,11 @@ class TaskModel extends Equatable {
     DateTime? date,
     bool? status,
     String? importance,
-  }) {
-    return TaskModel(
-      text: text ?? this.text,
-      date: date ?? this.date,
-      status: status ?? this.status,
-      importance: importance ?? this.importance,
-    );
-  }
+  }) =>
+      TaskModel(
+        text: text ?? this.text,
+        date: date ?? this.date,
+        status: status ?? this.status,
+        importance: importance ?? this.importance,
+      );
 }

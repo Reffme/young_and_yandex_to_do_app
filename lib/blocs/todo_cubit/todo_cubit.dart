@@ -1,19 +1,26 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import '../../logger/base_logger.dart';
 import '../../models/TaskModel.dart';
+import '../../repositories/TaskRepository.dart';
 
 part 'todo_state.dart';
 
 class TodoCubit extends Cubit<TodoState> {
-  TodoCubit(this.allTasks)
-      : super(
-          TodoInitial(status: true, allTasks: allTasks),
-        );
-  final List<TaskModel> allTasks;
+  TodoCubit() : super(TodoInitial(status: true, allTasks: [])) {
+    initializeTasks();
+  }
+
+  void initializeTasks() {
+    BaseLogger.log('initializeTasks() called');
+
+    final currentState = state as TodoInitial;
+    final List<TaskModel> tasks = TaskRepository().getAllTasks();
+    emit(currentState.copyWith(allTasks: tasks));
+  }
 
   void switchStatus() {
-    debugPrint('switchStatus() called');
+    BaseLogger.log('switchStatus() called');
 
     final currentState = state as TodoInitial;
     final newStatus = !currentState.status;
@@ -21,7 +28,7 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void delete(final int index) {
-    debugPrint('delete() called with index: $index');
+    BaseLogger.log('delete() called with index: $index');
 
     final currentState = state as TodoInitial;
     final List<TaskModel> updatedTasks =
@@ -33,7 +40,7 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void switchTaskStatus(final int index) {
-    debugPrint('switchTaskStatus() called with index: $index');
+    BaseLogger.log('switchTaskStatus() called with index: $index'); //
 
     final currentState = state as TodoInitial;
     final updatedTasks = List<TaskModel>.from(currentState.allTasks);
@@ -52,7 +59,7 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void add(final TaskModel task) {
-    debugPrint('add() called with task: $task');
+    BaseLogger.log('add() called with task: $task');
 
     final currentState = state as TodoInitial;
     final updatedTasks = List<TaskModel>.from(currentState.allTasks);
@@ -66,7 +73,7 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void editing(final int index, final TaskModel task) {
-    debugPrint('editing() called with index: $index, task: $task');
+    BaseLogger.log('editing() called with index: $index, task: $task');
 
     final currentState = state as TodoInitial;
     final updatedTasks = List<TaskModel>.from(currentState.allTasks);

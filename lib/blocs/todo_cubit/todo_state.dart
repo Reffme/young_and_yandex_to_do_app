@@ -8,7 +8,6 @@ class TodoInitial extends TodoState {
   final List<TaskModel> allTasks;
   final bool status;
 
-
   TodoInitial({required this.allTasks, required this.status});
 
   @override
@@ -17,8 +16,9 @@ class TodoInitial extends TodoState {
   TodoInitial copyWith({
     final List<TaskModel>? allTasks,
     final bool? status,
-  }) => TodoInitial(
-      allTasks: allTasks ?? this.allTasks,
-      status: status ?? this.status,
-    );
+  }) =>
+      TodoInitial(
+        allTasks: allTasks ?? this.allTasks,
+        status: status ?? this.status,
+      );
 }

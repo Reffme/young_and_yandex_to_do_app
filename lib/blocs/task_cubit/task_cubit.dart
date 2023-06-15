@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../logger/base_logger.dart';
 import '../../models/TaskModel.dart';
 
 part 'task_state.dart';
 
 class TaskCubit extends Cubit<TaskState> {
-  TaskCubit(final TaskModel initialTask) : super(TaskInitial(task: initialTask,));
+  TaskCubit(final TaskModel initialTask)
+      : super(TaskInitial(task: initialTask));
 
   void editTask({
     final String? text,
@@ -22,21 +25,24 @@ class TaskCubit extends Cubit<TaskState> {
         status: status ?? currentState.task.status,
         importance: importance ?? currentState.task.importance,
       );
+
+      BaseLogger.log('Updated Task: $updatedTask');
       emit(TaskInitial(task: updatedTask, index: index ?? currentState.index));
     }
   }
+
   void clearTask() {
     final currentState = state;
     if (currentState is TaskInitial) {
-      emit(TaskInitial(
-        task: currentState.task.copyWith(
-          text: '',
-          date: null,
-          status: false,
-          importance: '',
-        ),
-        index: -1,
-      ));
+      final clearedTask = currentState.task.copyWith(
+        text: '',
+        date: null,
+        status: false,
+        importance: '',
+      );
+
+      BaseLogger.log('Cleared Task: $clearedTask');
+      emit(TaskInitial(task: clearedTask, index: -1));
     }
   }
 }

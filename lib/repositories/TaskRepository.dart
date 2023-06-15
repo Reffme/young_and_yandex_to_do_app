@@ -4,67 +4,79 @@ class TaskRepository {
   List<TaskModel> getAllTasks() {
     final List<TaskModel> value = [
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          date: DateTime.now().toUtc(),
-          status: false,
-          importance: 'Высокий'),
+        text: 'Начать путешествие',
+        date: DateTime.now().toUtc(),
+        status: false,
+        importance: 'Высокий',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          status: true,
-          date: null,
-          importance: 'Нет'),
+        text: 'Исследовать океан',
+        status: true,
+        date: null,
+        importance: 'Нет',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          date: DateTime.now().toUtc(),
-          status: false,
-          importance: 'Низкий'),
+        text: 'Завершить проект',
+        date: DateTime.now().toUtc(),
+        status: false,
+        importance: 'Низкий',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          status: false,
-          importance: 'Высокий'),
+        text: 'Учиться программированию',
+        status: false,
+        importance: 'Высокий',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          status: true,
-          importance: 'Нет'),
+        text: 'Сделать подарок',
+        status: true,
+        importance: 'Нет',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          date: DateTime.now().toUtc(),
-          status: false,
-          importance: 'Нет'),
+        text: 'Познать мудрость',
+        date: DateTime.now().toUtc(),
+        status: false,
+        importance: 'Нет',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          date: DateTime.now().toUtc(),
-          status: false,
-          importance: 'Высокий'),
+        text: 'Написать книгу',
+        date: DateTime.now().toUtc(),
+        status: false,
+        importance: 'Высокий',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          status: true,
-          date: null,
-          importance: 'Нет'),
+        text: 'Организовать праздник',
+        status: true,
+        date: null,
+        importance: 'Нет',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          date: DateTime.now().toUtc(),
-          status: false,
-          importance: 'Низкий'),
+        text: 'Путешествовать вместе',
+        date: DateTime.now().toUtc(),
+        status: false,
+        importance: 'Низкий',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          status: false,
-          importance: 'Высокий'),
+        text: 'Прокачать навыки',
+        status: false,
+        importance: 'Высокий',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          status: true,
-          importance: 'Нет'),
+        text: 'Достичь успеха',
+        status: true,
+        importance: 'Нет',
+      ),
       TaskModel(
-          text: 'Создайте вашу первую задачу!',
-          date: DateTime.now().toUtc(),
-          status: false,
-          importance: 'Нет'),
+        text: 'Создать искусство',
+        date: DateTime.now().toUtc(),
+        status: false,
+        importance: 'Нет',
+      ),
     ];
     return value;
   }
-  int getCountSucessTasks() {
-    final int value = 4;
+
+  int getCountSuccessTasks() {
+    final int value = 8;
     return value;
   }
-
 }
