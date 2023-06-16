@@ -5,6 +5,8 @@
 
 [Здесь](https://disk.yandex.ru/d/cnEVc-sqZTsDlA) вы можете скачать последнюю версию .apk файла приложения.
 
+## Ссылка на  Telegram
+https://t.me/reffmepls
 
 ## Фичи
 
