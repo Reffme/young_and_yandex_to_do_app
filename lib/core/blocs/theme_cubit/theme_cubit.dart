@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:young_and_yandex_to_do_app/logger/base_logger.dart';
+
+import '../../logs/logger/base_logger.dart';
 
 part 'theme_state.dart';
 

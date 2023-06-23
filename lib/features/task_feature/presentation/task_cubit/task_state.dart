@@ -5,10 +5,10 @@ abstract class TaskState extends Equatable {
 }
 
 class TaskInitial extends TaskState {
+
+  const TaskInitial({required this.task, this.index = -1});
   final TaskModel task;
   final int index;
-
-  TaskInitial({required this.task, this.index = -1});
 
   @override
   List<Object> get props => [task];

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../blocs/task_cubit/task_cubit.dart';
-import '../blocs/todo_cubit/todo_cubit.dart';
-import '../models/TaskModel.dart';
+import 'package:young_and_yandex_to_do_app/features/task_feature/presentation/task_cubit/task_cubit.dart';
+
+import '../../../../core/localization/app_localization.dart';
+import '../../../list_tasks_feature/presentation/todo_cubit/todo_cubit.dart';
 
 class TaskScreen extends StatelessWidget {
   TaskScreen({Key? key}) : super(key: key);
@@ -65,7 +66,7 @@ class DeleteButtonWidget extends StatelessWidget {
               color: Colors.red,
             ),
             Text(
-              'Удалить',
+              AppLocalizations.of(context)!.delete.toString(),
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -103,11 +104,12 @@ class _TodoCalendarWidgetState extends State<TodoCalendarWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const BoldTextWidget(text: 'Сделать до'),
+              BoldTextWidget(
+                  text: AppLocalizations.of(context)!.dueDate.toString()),
               Text(
                 _selectedDate != null
                     ? DateFormat('dd.MM.yyyy').format(_selectedDate!)
-                    : 'Не выбрано',
+                    : AppLocalizations.of(context)!.notSelected.toString(),
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
@@ -197,8 +199,8 @@ class ToDoTextWidget extends StatelessWidget {
             onChanged: (value) => context
                 .read<TaskCubit>()
                 .editTask(text: _todoTextController.text),
-            decoration: const InputDecoration(
-              labelText: 'Что надо сделать?',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.task.toString(),
               border: InputBorder.none,
             ),
           ),
@@ -244,9 +246,9 @@ class PopAndSaveRowWidget extends StatelessWidget {
                 Navigator.of(context).pop();
               }
             },
-            child: const Text(
-              'СОХРАНИТЬ',
-              style: TextStyle(color: Colors.blue, fontSize: 16),
+            child: Text(
+              AppLocalizations.of(context)!.save.toString(),
+              style: const TextStyle(color: Colors.blue, fontSize: 16),
             ),
           ),
         ],
@@ -271,9 +273,9 @@ class _ImportantButtonWidgetState extends State<ImportantButtonWidget> {
     }
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
-            BoldTextWidget(text: 'Важность'),
+            BoldTextWidget(text: AppLocalizations.of(context)!.importance.toString()),
           ],
         ),
         Row(
@@ -281,19 +283,19 @@ class _ImportantButtonWidgetState extends State<ImportantButtonWidget> {
           children: [
             PopupMenuButton<String>(
               itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'Нет',
+                 PopupMenuItem(
+                  value:  AppLocalizations.of(context)!.no.toString(),
                   child: Text(
-                    'Нет',
+                    AppLocalizations.of(context)!.no.toString(),
                   ),
                 ),
-                const PopupMenuItem(
-                  value: 'Низкий',
-                  child: Text('Низкий'),
+                 PopupMenuItem(
+                  value:  AppLocalizations.of(context)!.low.toString(),
+                  child: Text(AppLocalizations.of(context)!.low.toString()),
                 ),
-                const PopupMenuItem(
-                  value: 'Высокий',
-                  child: Text('Высокий'),
+                 PopupMenuItem(
+                  value: AppLocalizations.of(context)!.high.toString(),
+                  child: Text(AppLocalizations.of(context)!.high.toString()),
                 ),
               ],
               onSelected: (value) {
@@ -316,9 +318,9 @@ class _ImportantButtonWidgetState extends State<ImportantButtonWidget> {
 }
 
 class BoldTextWidget extends StatelessWidget {
-  const BoldTextWidget({
-    Key? key,
+  BoldTextWidget({
     required this.text,
+    Key? key,
   }) : super(key: key);
 
   final String text;

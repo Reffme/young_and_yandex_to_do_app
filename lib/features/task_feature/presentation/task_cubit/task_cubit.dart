@@ -1,8 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../logger/base_logger.dart';
-import '../../models/TaskModel.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../../../../core/data/source/models/task_model.dart';
+import '../../../../core/data/source/repositories/task_repository.dart';
+import '../../../../core/logs/logger/base_logger.dart';
 
 part 'task_state.dart';
 
@@ -27,7 +28,10 @@ class TaskCubit extends Cubit<TaskState> {
       );
 
       BaseLogger.log('Updated Task: $updatedTask');
-      emit(TaskInitial(task: updatedTask, index: index ?? currentState.index));
+      emit(TaskInitial(
+        task: updatedTask,
+        index: index ?? currentState.index,
+      ));
     }
   }
 
@@ -43,6 +47,14 @@ class TaskCubit extends Cubit<TaskState> {
 
       BaseLogger.log('Cleared Task: $clearedTask');
       emit(TaskInitial(task: clearedTask, index: -1));
+    }
+  }
+
+  void updateTaskInRepository() {
+    final currentState = state;
+    if (currentState is TaskInitial) {
+      final taskRepository = TaskRepository(Hive.box<TaskModel>('tasks'));
+      taskRepository.updateTask(currentState.task);
     }
   }
 }
