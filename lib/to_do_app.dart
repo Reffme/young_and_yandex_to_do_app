@@ -15,7 +15,7 @@ import 'core/blocs/theme_cubit/theme_cubit.dart';
 import 'features/list_tasks_feature/presentation/todo_cubit/todo_cubit.dart';
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key, required this.taskRepository});
+  const MyApp({required this.taskRepository, super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();

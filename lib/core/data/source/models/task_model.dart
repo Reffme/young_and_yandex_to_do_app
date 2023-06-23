@@ -1,10 +1,17 @@
-import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 part 'task_model.g.dart';
 
 @HiveType(typeId: 1)
 class TaskModel extends HiveObject {
+
+  TaskModel({
+    required this.id,
+    required this.text,
+    required this.date,
+    required this.status,
+    required this.importance,
+  });
   @HiveField(0)
   late String id;
 
@@ -19,14 +26,6 @@ class TaskModel extends HiveObject {
 
   @HiveField(4)
   late String importance;
-
-  TaskModel({
-    required this.id,
-    required this.text,
-    required this.date,
-    required this.status,
-    required this.importance,
-  });
 
   TaskModel copyWith({
     String? id,

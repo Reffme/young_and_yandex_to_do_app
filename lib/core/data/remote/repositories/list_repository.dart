@@ -100,7 +100,6 @@ class ListRepository {
       );
       _logger.d('Update List Response JSON: ${response.data}');
       final listResponse = ListResponseModel.fromJson(response.data);
-      // Process the merged list response if needed
     } catch (error) {
       _logger.e('Failed to update list: $error');
       rethrow;

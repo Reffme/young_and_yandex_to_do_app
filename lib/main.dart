@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:uuid/uuid.dart';
-import 'core/data/remote/models/list_item_model.dart';
+
 import 'core/data/remote/network_service.dart';
 import 'core/data/source/models/task_model.dart';
 import 'core/data/source/repositories/task_repository.dart';
@@ -20,10 +19,11 @@ Future<void> main() async {
   // Create list repository
   final listRepository = ListRepository(networkService);
 
-  try {
-    final list = await listRepository.getList();
-    // Process the list as needed
-  } catch (error) {}
+  // //тестирую
+  // try {
+  //   final list = await listRepository.getList();
+  //   // Process the list as needed
+  // } catch (error) {}
 
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
